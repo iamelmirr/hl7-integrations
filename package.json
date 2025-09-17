@@ -4,7 +4,11 @@
   "description": "HL7 integrations demo project in JavaScript",
   "main": "src/main.js",
   "scripts": {
-    "start": "node src/main.js"
+    "start": "node src/main.js",
+    "server": "node src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
   },
   "author": "Elmir Besirovic",
   "license": "MIT"

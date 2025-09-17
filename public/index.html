@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HL7 Integrations Demo</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f8f9fa; }
+        h1 { color: #333; text-align: center; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 5px; font-size: 16px; }
+        button:hover { background: #0056b3; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .segment { background: white; margin: 10px 0; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .segment h3 { margin: 0 0 10px 0; color: #007bff; }
+        .field { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee; }
+        .field:last-child { border-bottom: none; }
+        .field-label { font-weight: bold; }
+        .field-value { color: #555; }
+        .loading { text-align: center; font-style: italic; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HL7 Integrations Demo</h1>
+        <button onclick="loadHL7Data()">Učitaj HL7 Podatke</button>
+        <div id="hl7Container" class="loading">Klikni dugme da učitaš podatke.</div>
+    </div>
+
+    <script>
+        async function loadHL7Data() {
+            const container = document.getElementById('hl7Container');
+            container.innerHTML = '<div class="loading">Učitavanje...</div>';
+            try {
+                const response = await fetch('/api/hl7');
+                const data = await response.json();
+                console.log('Cijeli JSON:', data); // Log cijeli JSON u konzolu
+                displayData(data);
+            } catch (error) {
+                container.innerHTML = '<div style="color: red;">Greška: ' + error.message + '</div>';
+            }
+        }
+
+        function displayData(data) {
+            const container = document.getElementById('hl7Container');
+            container.innerHTML = '';
+            for (const [segmentType, fields] of Object.entries(data)) {
+                const segmentDiv = document.createElement('div');
+                segmentDiv.className = 'segment';
+                segmentDiv.innerHTML = `<h3>${segmentType}</h3>`;
+                for (const [key, value] of Object.entries(fields)) {
+                    const fieldDiv = document.createElement('div');
+                    fieldDiv.className = 'field';
+                    fieldDiv.innerHTML = `<span class="field-label">${key}:</span> <span class="field-value">${value || '(prazno)'}</span>`;
+                    segmentDiv.appendChild(fieldDiv);
+                }
+                container.appendChild(segmentDiv);
+            }
+        }
+    </script>
+</body>
+</html>

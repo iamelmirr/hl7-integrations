@@ -15,10 +15,24 @@ function parseHL7(message) {
     return parsed;
 }
 
+// Funkcija za konverziju u JSON
+function hl7ToJson(parsed) {
+    const json = {};
+    parsed.forEach(segment => {
+        const segmentType = segment[0];
+        json[segmentType] = {};
+        for (let i = 1; i < segment.length; i++) {
+            json[segmentType][`field${i}`] = segment[i];
+        }
+    });
+    return json;
+}
+
 // Čitanje HL7 fajla
 const hl7FilePath = path.join(__dirname, '..', 'samples', 'sample.hl7');
 const hl7Message = fs.readFileSync(hl7FilePath, 'utf8');
 const parsedMessage = parseHL7(hl7Message);
+const jsonMessage = hl7ToJson(parsedMessage);
 
 // Ispis rezultata
 console.log('Parsed HL7 Message:');
@@ -31,3 +45,6 @@ parsedMessage.forEach(segment => {
     }
     console.log('------------------------------');
 });
+
+console.log('\nJSON Representation:');
+console.log(JSON.stringify(jsonMessage, null, 2));
